@@ -14,8 +14,13 @@ values = []
 s = s.strip().replace('\n', '').replace('\r', '')
 while s != '':
         str = s[s.find('<') + 1: s.find('>')]
-        #print(str)
+        print(str)
         values.append(str)
         s = s[s.find('>') + 1: ]
+        break
 
 #print (values)
+
+
+if __name__ == "__main__" :
+    print 'test main function'
