@@ -12,48 +12,31 @@ from html import Parse
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-book_tag = '¼ÆËã»ú'
-page_num = 0
-
-#url='http://www.douban.com/tag/'+urllib.quote(book_tag)+'/book?start='+str(page_num*15)
-url = 'https://book.douban.com/tag/' + urllib.quote(book_tag)
-#print(url)
-result= ''
-
-try:
-    request = urllib2.Request(url)
-    #request = urllib2.Request("http://www.baidu.com/")
-
-    #response = urllib2.urlopen("http://www.baidu.com/")
-    response = urllib2.urlopen(request)
-
-    result = response.read()
-
-#    print(result)
-except (urllib2.HTTPError, urllib2.URLError), e:
-    print e
+def do_spider(lists):
+    print 'call the do spider function'
+    print len(lists)
+    for tag in lists:
+        #print urllib.quote(tag), tag
     
+        url = 'https://book.douban.com/tag/' + urllib.quote(tag)
+        try:
+            request = urllib2.Request(url)
+            response = urllib2.urlopen(request)
+            result = response.read()
+            
+        except (urllib2.HTTPError, urllib2.URLError), e:
+            print e
+        
+        p = Parse(result)
+            
+        title = p.getTitle()
+        print title
+        
+        data = p.getList()
+        for d in data:
+            print d['img']
 
-#p = html.Parse(result)
-#p = Parse(result)
-
-#p.getContent()
-#p.getTitle()
-
-#s = result
-#values = []
-#s = s.strip().replace('\n', '').replace('\r', '')
-#while s != '':
-#        str = s[s.find('<') + 1: s.find('>')]
-#        #print(str)
-#        values.append(str)
-#        s = s[s.find('>') + 1: ]
-#
-##print (values)
-
-def do_spider(tag_list):
-    print tag_list[0]    
-
+    
 class Usage(Exception) :
     def __init__(self, msg):
         self.msg = msg
@@ -76,32 +59,32 @@ def main(argv=None):
         except getopt.error, msg:
             raise Usage(msg)
         #more code, unchanged 
-        for o, a in opts :
-            print o
-            print a
+ #       for o, a in opts :
+ #           print o
+ #           print a
 
         print '------'
 
-        for i in args :
-            print i
+#        for i in args :
+#            print i
 
     except Usage, err:
 #        print >> sys.stderr, err.msg
         print err.msg
         print >> sys.stderr, 'for help us --help'
 
-    #book_tag_lists = ['ĞÄÀí','ÅĞ¶ÏÓë¾ö²ß','Ëã·¨','Êı¾İ½á¹¹','¾­¼Ã','ÀúÊ·']
-    #book_tag_lists = ['´«¼Ç','ÕÜÑ§','±à³Ì','´´Òµ','Àí²Æ','Éç»áÑ§','·ğ½Ì']
-    #book_tag_lists = ['Ë¼Ïë','¿Æ¼¼','¿ÆÑ§','web','¹ÉÆ±','°®Çé','Á½ĞÔ']
-    #book_tag_lists = ['¼ÆËã»ú','»úÆ÷Ñ§Ï°','linux','android','Êı¾İ¿â','»¥ÁªÍø']
-    #book_tag_lists = ['ÊıÑ§']
-    #book_tag_lists = ['ÉãÓ°','Éè¼Æ','ÒôÀÖ','ÂÃĞĞ','½ÌÓı','³É³¤','Çé¸Ğ','Óı¶ù','½¡¿µ','ÑøÉú']
-    #book_tag_lists = ['ÉÌÒµ','Àí²Æ','¹ÜÀí']  
-    #book_tag_lists = ['ÃûÖø']
-    #book_tag_lists = ['¿ÆÆÕ','¾­µä','Éú»î','ĞÄÁé','ÎÄÑ§']
-    #book_tag_lists = ['¿Æ»Ã','Ë¼Î¬','½ğÈÚ']
-    book_tag_lists = ['¸öÈË¹ÜÀí','Ê±¼ä¹ÜÀí','Í¶×Ê','ÎÄ»¯','×Ú½Ì']
-    #book_list = do_spider(book_tag_list)
+    #book_tag_lists = ['å¿ƒç†','åˆ¤æ–­ä¸å†³ç­–','ç®—æ³•','æ•°æ®ç»“æ„','ç»æµ','å†å²']
+    #book_tag_lists = ['ä¼ è®°','å“²å­¦','ç¼–ç¨‹','åˆ›ä¸š','ç†è´¢','ç¤¾ä¼šå­¦','ä½›æ•™']
+    #book_tag_lists = ['æ€æƒ³','ç§‘æŠ€','ç§‘å­¦','web','è‚¡ç¥¨','çˆ±æƒ…','ä¸¤æ€§']
+    #book_tag_lists = ['è®¡ç®—æœº','æœºå™¨å­¦ä¹ ','linux','android','æ•°æ®åº“','äº’è”ç½‘']
+    #book_tag_lists = ['æ•°å­¦']
+    #book_tag_lists = ['æ‘„å½±','è®¾è®¡','éŸ³ä¹','æ—…è¡Œ','æ•™è‚²','æˆé•¿','æƒ…æ„Ÿ','è‚²å„¿','å¥åº·','å…»ç”Ÿ']
+    #book_tag_lists = ['å•†ä¸š','ç†è´¢','ç®¡ç†']  
+    #book_tag_lists = ['åè‘—']
+    #book_tag_lists = ['ç§‘æ™®','ç»å…¸','ç”Ÿæ´»','å¿ƒçµ','æ–‡å­¦']
+    #book_tag_lists = ['ç§‘å¹»','æ€ç»´','é‡‘è']
+    book_tag_lists = ['ä¸ªäººç®¡ç†','æ—¶é—´ç®¡ç†','æŠ•èµ„','æ–‡åŒ–','å®—æ•™']
+    book_list = do_spider(book_tag_lists)
 
     #print_book_list_execl(book_list)
 
@@ -109,3 +92,5 @@ def main(argv=None):
 
 if __name__ == '__main__' :
     sys.exit(main())
+
+
