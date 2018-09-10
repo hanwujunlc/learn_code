@@ -4,7 +4,8 @@
 import urllib
 import urllib2
 import sys
-import getopt 
+import getopt
+import time 
 
 sys.path.append('douban')
 from html import Parse
@@ -12,31 +13,57 @@ from html import Parse
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+hds=[{'Host':'book.douban.com',
+      'Connection':'keep-alive',
+      'Cache-Control':'max-age=0',
+      'Upgrade-Insecure-Requests':'1',
+      'User-Agent' : 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/67.0.3396.99 Chrome/67.0.3396.99 Safari/537.36',
+      'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+      'Accept-Encoding':'gzip, deflate, br',
+      'Accept-Language':'h-CN,zh;q=0.9'} , \
+     ]
+
 def do_spider(lists):
     print 'call the do spider function'
+    httpHandler = urllib2.HTTPHandler(debuglevel=1)
+    httpsHandler = urllib2.HTTPSHandler(debuglevel=1)
+    opener = urllib2.build_opener(httpHandler, httpsHandler)
+    urllib2.install_opener(opener)
     print len(lists)
     for tag in lists:
         #print urllib.quote(tag), tag
-    
-        url = 'https://book.douban.com/tag/' + urllib.quote(tag)
-        try:
-            request = urllib2.Request(url)
-            response = urllib2.urlopen(request)
-            result = response.read()
+        page_num = 0
+        while 1:
             
-        except (urllib2.HTTPError, urllib2.URLError), e:
-            print e
-        
-        p = Parse(result)
+            url = 'https://book.douban.com/tag/' + urllib.quote(tag) + '?start=' + str(page_num * 20)
+            page_num = page_num + 1
+            result = ''
+            print url 
+            time.sleep(5)
+            try:
+                request = urllib2.Request(url, headers=hds[len(hds)- 1])
+                response = urllib2.urlopen(request, timeout=10)
+                result = response.read()
+                
+            except (urllib2.HTTPError, urllib2.URLError), e:
+                print e
+                
+            print result
+            p = Parse(result)
+                
+            title = p.getTitle()
+            print title
             
-        title = p.getTitle()
-        print title
-        
-        data = p.getList()
-        for d in data:
-            print d['img']
-
-    
+            data = p.getList()
+            if len(data) == 0 :
+                print 'no data found '
+                break
+            
+            for d in data:
+                print d['title']
+            
+            break
+        break
 class Usage(Exception) :
     def __init__(self, msg):
         self.msg = msg
@@ -73,7 +100,7 @@ def main(argv=None):
         print err.msg
         print >> sys.stderr, 'for help us --help'
 
-    #book_tag_lists = ['心理','判断与决策','算法','数据结构','经济','历史']
+    book_tag_lists = ['心理','判断与决策','算法','数据结构','经济','历史']
     #book_tag_lists = ['传记','哲学','编程','创业','理财','社会学','佛教']
     #book_tag_lists = ['思想','科技','科学','web','股票','爱情','两性']
     #book_tag_lists = ['计算机','机器学习','linux','android','数据库','互联网']
@@ -83,7 +110,8 @@ def main(argv=None):
     #book_tag_lists = ['名著']
     #book_tag_lists = ['科普','经典','生活','心灵','文学']
     #book_tag_lists = ['科幻','思维','金融']
-    book_tag_lists = ['个人管理','时间管理','投资','文化','宗教']
+    #book_tag_lists = ['个人管理','时间管理','投资','文化','宗教']
+    #book_tag_lists = ['名著']
     book_list = do_spider(book_tag_lists)
 
     #print_book_list_execl(book_list)

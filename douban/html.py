@@ -8,6 +8,8 @@ class Parse:
         '''Initializes func'''
         content = content.strip().replace('\n', '').replace('\r', '')
         self.content = content
+        self.title = ''
+        self.list = []
         #self.getList()
         #self.getTitle()
 
@@ -40,7 +42,9 @@ class Parse:
         
 #        ##print s[0].strip()
         #print s
-        self.title = s[0].strip()
+        if len(s) != 0 :
+            self.title = s[0].strip()
+        
         return self.title
 
     def getList(self):
@@ -64,7 +68,11 @@ class Parse:
             i_img = re.compile('<img class.+?>').findall(i)[0]
             ###print len(re.compile('https://.+?\.jpg').findall(i_img))
             ###print re.compile('https://.+?\.jpg').findall(i_img)[0]
-            i_img = re.compile('https://.+?\.jpg').findall(re.compile('<img class.+?>').findall(i)[0])[0]
+            img_content = re.compile('https://.+?\.jpg').findall(re.compile('<img class.+?>').findall(i)[0])
+            i_img = ''
+            if len(img_content) != 0:
+                i_img = img_content[0]
+            
             ##print i_img
             node['img'] = i_img
 
@@ -80,17 +88,23 @@ class Parse:
             i_pub = re.compile('(?<=<div class="pub">).+?(?=</div>)').findall(i)[0].strip()
             ##print i_pub
             node['pub'] = i_pub
-
-            i_rating = re.compile('(?<=<span class="rating_nums">).+?(?=</span>)').findall(i)[0]
-            ##print(i_rating)
+            
+            i_rating_content = re.compile('(?<=<span class="rating_nums">).+?(?=</span>)').findall(i)
+            i_rating = ''
+            if len(i_rating_content) != 0 :
+                i_rating = i_rating_content[0].strip()
+            print(i_rating)
             node['rating'] = i_rating
             
             i_pl = re.compile('(?<=<span class="pl">).+?(?=</span>)').findall(i)[0].strip()
             ##print i_pl
             node['pl'] = i_pl
-
-            i_p = re.compile('(?<=<p>).+?(?=</p>)').findall(i)[0].strip()
-            ##print i_p
+            
+            i_p_content = re.compile('(?<=<p>).+?(?=</p>)').findall(i)
+            i_p = ''
+            if len(i_p_content) != 0 :  
+                i_p = re.compile('(?<=<p>).+?(?=</p>)').findall(i)[0].strip()
+            #print i_p
             node['p'] = i_p
             self.list.append(node)
 
