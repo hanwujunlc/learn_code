@@ -13,22 +13,14 @@ from html import Parse
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-hds=[{'Host':'book.douban.com',
-      'Connection':'keep-alive',
-      'Cache-Control':'max-age=0',
-      'Upgrade-Insecure-Requests':'1',
-      'User-Agent' : 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/67.0.3396.99 Chrome/67.0.3396.99 Safari/537.36',
-      'Accept':'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-      'Accept-Encoding':'gzip, deflate, br',
-      'Accept-Language':'h-CN,zh;q=0.9'} , \
-     ]
+hds=[{'User-Agent' : 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/67.0.3396.99 Chrome/67.0.3396.99 Safari/537.36'}]
 
 def do_spider(lists):
     print 'call the do spider function'
     httpHandler = urllib2.HTTPHandler(debuglevel=1)
     httpsHandler = urllib2.HTTPSHandler(debuglevel=1)
-    opener = urllib2.build_opener(httpHandler, httpsHandler)
-    urllib2.install_opener(opener)
+    #opener = urllib2.build_opener(httpHandler, httpsHandler)
+   # urllib2.install_opener(opener)
     print len(lists)
     for tag in lists:
         #print urllib.quote(tag), tag
@@ -42,13 +34,14 @@ def do_spider(lists):
             time.sleep(5)
             try:
                 request = urllib2.Request(url, headers=hds[len(hds)- 1])
-                response = urllib2.urlopen(request, timeout=10)
+                #request = urllib2.Request(url)
+                response = urllib2.urlopen(request)
                 result = response.read()
                 
             except (urllib2.HTTPError, urllib2.URLError), e:
                 print e
                 
-            print result
+ #           print result
             p = Parse(result)
                 
             title = p.getTitle()
@@ -62,8 +55,8 @@ def do_spider(lists):
             for d in data:
                 print d['title']
             
-            break
-        break
+        #    break
+       # break
 class Usage(Exception) :
     def __init__(self, msg):
         self.msg = msg
